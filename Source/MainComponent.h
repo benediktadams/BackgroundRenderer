@@ -15,7 +15,7 @@ public:
     void resized() override;
 
 private:
-
+    OpenGLContext glContext;
     RenderTest test;
 
 

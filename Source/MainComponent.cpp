@@ -3,6 +3,9 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
+    glContext.setComponentPaintingEnabled (true);
+    glContext.attachTo (*this);
+    
     addAndMakeVisible (test);
     setSize (600, 400);
 }
