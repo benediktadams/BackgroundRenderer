@@ -95,7 +95,7 @@ void RenderTest::paint(Graphics &g)
     }, getWidth(), getHeight());
 
     Image imgToPaint = bgRenderer.getLatestImage();
-    g.drawImage(imgToPaint, getLocalBounds().toFloat(), RectanglePlacement::centred);
+    g.drawImage(imgToPaint, getLocalBounds().toFloat(), RectanglePlacement::fillDestination);
 }
 
 void RenderTest::resized()
