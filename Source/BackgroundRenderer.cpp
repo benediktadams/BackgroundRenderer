@@ -65,7 +65,7 @@ void BackgroundRenderer::run ()
     }
 }
 
-void BackgroundRenderer::draw (Graphics& g, const Rectangle<float>& area)
+void BackgroundRenderer::draw (Graphics& g, const Rectangle<float>& area, RectanglePlacement rectPlacement)
 {
     if (updatedCaller.get ())
     {
@@ -83,7 +83,7 @@ void BackgroundRenderer::draw (Graphics& g, const Rectangle<float>& area)
     Image imgToPaint { getLatestImage() };
     g.drawImage (imgToPaint,
                  area,
-                 RectanglePlacement::fillDestination);
+                 rectPlacement);
 }
 
 Image& BackgroundRenderer::getLatestImage ()

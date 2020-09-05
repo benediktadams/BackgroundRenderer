@@ -24,7 +24,9 @@ public:
     BackgroundRenderer (BgRenderingCall call);
     ~BackgroundRenderer ();
     
-    void draw (Graphics& g, const Rectangle<float>& area);
+    void draw (Graphics& g,
+               const Rectangle<float>& area,
+               RectanglePlacement rectPlacement = RectanglePlacement::fillDestination);
     
     Image& getLatestImage ();
     
