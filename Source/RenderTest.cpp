@@ -11,29 +11,15 @@
 #include "RenderTest.h"
 
 RenderTest::RenderTest ()
+:
+bgRenderer ({[&](Graphics& bgG) { aPaintCallThatsTooComplex(bgG); }, this})
 {
-    setBufferedToImage (true);
 }
 
 void RenderTest::paint (Graphics &g)
 {
-    bgRenderer.addRenderCall
-    (
-        {
-            [&] (Graphics& bgG) { aPaintCallThatsTooComplex (bgG); },
-            this
-        },
-        getWidth(), getHeight()
-     );
-    
     bgRenderer.draw (g, getLocalBounds().toFloat());
 }
-
-void RenderTest::resized ()
-{
-    bgRenderer.clearExceptLatest();
-}
-
 
 void RenderTest::aPaintCallThatsTooComplex (Graphics& g)
 {
@@ -64,12 +50,12 @@ void RenderTest::aPaintCallThatsTooComplex (Graphics& g)
     Colour outerColour(0xffffff); // white
     
     float invrt = jmin( jmax(JUCE_LIVE_CONSTANT(0.f), 1.0f), 0.f); // oder 1.0f
-    DBG("invert: " << invrt );
+//    DBG("invert: " << invrt );
     
 //    Range range(0.f, 1.f);
     
     
-    DBG("\n\n");
+//    DBG("\n\n");
     for ( auto i = 0; i <= precision; ++i )
     {
         conicPath.clear();
@@ -77,7 +63,7 @@ void RenderTest::aPaintCallThatsTooComplex (Graphics& g)
         
         
         auto radialGradientFunc = abs( std::sin( tau * x * JUCE_LIVE_CONSTANT(2.5) ) ); // 5 oder 10 mal von 0. nach 1.0
-        DBG("radialGradientFunc: " << radialGradientFunc);
+//        DBG("radialGradientFunc: " << radialGradientFunc);
         
         
         outerColour =  outerColour.withRotatedHue( radialGradientFunc )

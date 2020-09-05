@@ -10,9 +10,10 @@
 
 #include "BackgroundRenderer.h"
 
-BackgroundRenderer::BackgroundRenderer ()
+BackgroundRenderer::BackgroundRenderer (BgRenderingCall call)
 :
-Thread ("BgRenderingHelper" + Uuid().toString())
+Thread ("BgRenderingHelper" + Uuid().toString()),
+renderCall (call)
 {
     startThread ();
 }
@@ -26,15 +27,6 @@ BackgroundRenderer::~BackgroundRenderer ()
     }
 }
 
-void BackgroundRenderer::addRenderCall (BgRenderingCall call, int width, int height)
-{
-    if (!updatedCaller.get())
-    {
-        const ScopedLock sl (cs);
-        renderCalls.push (call);
-        renderSizes.push ({width, height});
-    }
-}
 
 void BackgroundRenderer::run ()
 {
@@ -42,48 +34,53 @@ void BackgroundRenderer::run ()
     {
         Thread::wait (1);
         
-        BgRenderingCall currentCall { nullptr, nullptr };
-        std::pair<int, int> size;
+        if (shouldRender.get())
         {
-            const ScopedLock sl (cs);
-            if (!renderCalls.empty())
-            {
-                currentCall = renderCalls.front();
-                renderCalls.pop();
-                
-                size = renderSizes.front();
-                renderSizes.pop ();
-            }
-        }
-        
-        if (currentCall.first != nullptr && currentCall.second != nullptr)
-        {
-            Image img { Image::ARGB, size.first, size.second, true };
+            shouldRender.set (false);
+            Image img { Image::ARGB,
+                        renderSize.first.get(),
+                        renderSize.second.get(),
+                        true };
             Graphics g { img };
-            currentCall.first (g);
+            
+            renderCall.first (g);
             
             {
                 const ScopedLock sl (imageCs);
                 latestImage = img;
             }
- 
-            MessageManager::callAsync ([&, caller = currentCall.second]()
+
+            
+            MessageManager::callAsync ([&]()
             {
-                updatedCaller.set (true);
-                if (caller) caller->repaint();
+                 updatedCaller.set (true);
+                if (auto comp = renderCall.second)
+                    comp->repaint();
+                
+               
+                
             });
             
-            clearExceptLatest ();
         }
     }
 }
 
 void BackgroundRenderer::draw (Graphics& g, const Rectangle<float>& area)
 {
-    if (updatedCaller.get())
-        updatedCaller.set(false);
-    
-    Image imgToPaint = getLatestImage();
+    if (updatedCaller.get ())
+    {
+        updatedCaller.set (false);
+    }
+    else if (!shouldRender.get()
+             || renderSize.first.get() != area.getWidth()
+             || renderSize.second.get() != area.getWidth())
+    {
+        renderSize.first.set (area.getWidth());
+        renderSize.second.set (area.getHeight());
+        shouldRender.set (true);
+    }
+       
+    Image imgToPaint { getLatestImage() };
     g.drawImage (imgToPaint,
                  area,
                  RectanglePlacement::fillDestination);
@@ -95,9 +92,4 @@ Image& BackgroundRenderer::getLatestImage ()
     return latestImage;
 }
 
-void BackgroundRenderer::clearExceptLatest ()
-{
-    const ScopedLock sl (cs);
-    while (renderCalls.size() > 1) renderCalls.pop ();
-    while (renderSizes.size() > 1) renderSizes.pop ();
-}
+

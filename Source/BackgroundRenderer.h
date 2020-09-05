@@ -21,26 +21,25 @@ typedef std::pair
 class BackgroundRenderer : public Thread
 {
 public:
-    BackgroundRenderer ();
+    BackgroundRenderer (BgRenderingCall call);
     ~BackgroundRenderer ();
     
-    void addRenderCall (BgRenderingCall call, int width, int height);
     void draw (Graphics& g, const Rectangle<float>& area);
     
     Image& getLatestImage ();
-    void clearExceptLatest ();
     
     Atomic<bool> updatedCaller { false };
     
 private:
     CriticalSection cs;
-    std::queue<BgRenderingCall> renderCalls;
-    std::queue<std::pair<int, int>> renderSizes;
+    BgRenderingCall renderCall;
+    std::pair<Atomic<int>, Atomic<int>> renderSize;
     
     CriticalSection imageCs;
     Image latestImage;
     
     void run () override;
+    Atomic<int> shouldRender { false };
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BackgroundRenderer)
 };
