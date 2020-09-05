@@ -25,6 +25,8 @@ public:
     ~BackgroundRenderer ();
     
     void addRenderCall (BgRenderingCall call, int width, int height);
+    void draw (Graphics& g, const Rectangle<float>& area);
+    
     Image& getLatestImage ();
     void clearExceptLatest ();
     

@@ -28,9 +28,12 @@ BackgroundRenderer::~BackgroundRenderer ()
 
 void BackgroundRenderer::addRenderCall (BgRenderingCall call, int width, int height)
 {
-    const ScopedLock sl (cs);
-    renderCalls.push (call);
-    renderSizes.push ({width, height});
+    if (!updatedCaller.get())
+    {
+        const ScopedLock sl (cs);
+        renderCalls.push (call);
+        renderSizes.push ({width, height});
+    }
 }
 
 void BackgroundRenderer::run ()
@@ -73,6 +76,17 @@ void BackgroundRenderer::run ()
             clearExceptLatest ();
         }
     }
+}
+
+void BackgroundRenderer::draw (Graphics& g, const Rectangle<float>& area)
+{
+    if (updatedCaller.get())
+        updatedCaller.set(false);
+    
+    Image imgToPaint = getLatestImage();
+    g.drawImage (imgToPaint,
+                 area,
+                 RectanglePlacement::fillDestination);
 }
 
 Image& BackgroundRenderer::getLatestImage ()

@@ -12,31 +12,21 @@
 
 RenderTest::RenderTest ()
 {
-
+    setBufferedToImage (true);
 }
 
-void RenderTest::paint(Graphics &g)
+void RenderTest::paint (Graphics &g)
 {
-    if (bgRenderer.updatedCaller.get())
-    {
-        bgRenderer.updatedCaller.set(false);
-    }
-    else
-    {
-        bgRenderer.addRenderCall
-        ({
-            [&](Graphics& bgG)
-            {
-                aPaintCallThatsTooComplex(bgG);
-            },
+    bgRenderer.addRenderCall
+    (
+        {
+            [&] (Graphics& bgG) { aPaintCallThatsTooComplex (bgG); },
             this
-        }, getWidth(), getHeight());
-    }
+        },
+        getWidth(), getHeight()
+     );
     
-    Image imgToPaint = bgRenderer.getLatestImage();
-    g.drawImage (imgToPaint,
-                 getLocalBounds().toFloat(),
-                 RectanglePlacement::fillDestination);
+    bgRenderer.draw (g, getLocalBounds().toFloat());
 }
 
 void RenderTest::resized ()
