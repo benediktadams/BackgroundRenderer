@@ -23,4 +23,6 @@ private:
     
     void paint (Graphics& g) override;
     void resized () override;
+    
+    void aPaintCallThatsTooComplex (Graphics& g);
 };

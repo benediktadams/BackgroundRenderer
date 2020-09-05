@@ -64,10 +64,10 @@ void BackgroundRenderer::run ()
                 latestImage = img;
             }
  
-            MessageManager::callAsync ([&, update = currentCall.second]()
+            MessageManager::callAsync ([&, caller = currentCall.second]()
             {
                 updatedCaller.set (true);
-                update ();
+                if (caller) caller->repaint();
             });
             
             clearExceptLatest ();

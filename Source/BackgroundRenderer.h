@@ -15,7 +15,7 @@
 typedef std::pair
         <
         std::function<void(Graphics& g)> /*call*/,
-        std::function<void()> /*onFinishedRendering*/
+        Component* /*caller*/
         > BgRenderingCall;
 
 class BackgroundRenderer : public Thread
