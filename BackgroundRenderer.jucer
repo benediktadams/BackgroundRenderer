@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="InRbp1" name="BackgroundRenderer" projectType="guiapp" jucerFormatVersion="1">
+<JUCERPROJECT id="InRbp1" name="BackgroundRenderer" projectType="guiapp" jucerFormatVersion="1"
+              displaySplashScreen="1">
   <MAINGROUP id="zcuJFZ" name="BackgroundRenderer">
     <GROUP id="{E71EBE55-53AA-C67C-95A4-1BA53A33D0A6}" name="Source">
       <FILE id="Z6orZ3" name="RenderTest.cpp" compile="1" resource="0" file="Source/RenderTest.cpp"/>

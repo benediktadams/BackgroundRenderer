@@ -40,34 +40,22 @@ void RenderTest::aPaintCallThatsTooComplex (Graphics& g)
     auto precision = 1000;
     Path conicPath;
     
-    
-    // PARAMETERS
-    float crossfade = JUCE_LIVE_CONSTANT(0.0f);
+    float crossfade = (0.5f);
     
     Colour centerColourA(Colours::black); //
     Colour centerColourB(Colours::white);
     
     Colour outerColour(0xffffff); // white
     
-    float invrt = jmin( jmax(JUCE_LIVE_CONSTANT(0.f), 1.0f), 0.f); // oder 1.0f
-//    DBG("invert: " << invrt );
-    
-//    Range range(0.f, 1.f);
-    
-    
-//    DBG("\n\n");
     for ( auto i = 0; i <= precision; ++i )
     {
         conicPath.clear();
         auto x = (float)i / precision; // goes from 1/1000 to 1
         
-        
-        auto radialGradientFunc = abs( std::sin( tau * x * JUCE_LIVE_CONSTANT(2.5) ) ); // 5 oder 10 mal von 0. nach 1.0
-//        DBG("radialGradientFunc: " << radialGradientFunc);
-        
+        auto radialGradientFunc = abs( std::sin( tau * x * JUCE_LIVE_CONSTANT(2.5) ) );
         
         outerColour =  outerColour.withRotatedHue( radialGradientFunc )
-                            .withBrightness(abs ( invrt - radialGradientFunc)) // immer von dark to bright oder umgekehrt
+                            .withBrightness(abs ( radialGradientFunc))
                             .withSaturation(0.0f);
         
         conicPath.addCentredArc(centre.getX(), centre.getY(), conicRadius, conicRadius, 0, 0, tau * x, true );
@@ -78,10 +66,7 @@ void RenderTest::aPaintCallThatsTooComplex (Graphics& g)
         
         g.setGradientFill(ColourGradient (currentColour, centre,
                                           outerColour, conicPath.getCurrentPosition(),
-                                          true/*, // We don't want a radial pattern
-                                          true*/) ); // We DO want a conical pattern)
-        
-//        g.setColour(conicColour);
+                                          true) );
         g.drawLine(conicLine);
     }
 }
