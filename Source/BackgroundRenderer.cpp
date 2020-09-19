@@ -53,12 +53,9 @@ void BackgroundRenderer::run ()
             
             MessageManager::callAsync ([&]()
             {
-                 updatedCaller.set (true);
+                updatedCaller.set (true);
                 if (auto comp = renderCall.second)
                     comp->repaint();
-                
-               
-                
             });
             
         }
